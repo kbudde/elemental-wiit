@@ -1,26 +1,22 @@
 DOCKER?=docker
 
 # Inputs
-SOURCE_REPO?=registry.suse.com/suse/sl-micro/6.1/baremetal-os-container
-SOURCE_VERSION?=2.2.0-3.12
 ELEMENTAL_TOOLKIT_REPO?=ghcr.io/rancher/elemental-toolkit/elemental-cli
-ELEMENTAL_TOOLKIT_VERSION?=v2.2.0
+ELEMENTAL_TOOLKIT_VERSION?=v2.2.1
+#RANCHER_SYSTEM_AGENT_VERSION?=v0.3.4
+#ELEMENTAL_REGISTER?=WHERE_TO GET? https://github.com/rancher/elemental-operator/blob/main/Dockerfile
 
 # Outputs
 ELEMENTAL_BUILD?=dev
-ELEMENTAL_REPO?=ghcr.io/max06/elemental-wiit
-ELEMENTAL_TAG?=$(SOURCE_VERSION)-$(ELEMENTAL_TOOLKIT_VERSION)-$(ELEMENTAL_BUILD)
+ELEMENTAL_REPO?=ghcr.io/kbudde/elemental-wiit
+ELEMENTAL_TAG?=$(ELEMENTAL_TOOLKIT_VERSION)-$(ELEMENTAL_BUILD)
 
 .PHONY: build-base-os
 build-base-os:
 	$(DOCKER) build \
 			--build-arg ELEMENTAL_TOOLKIT=$(ELEMENTAL_TOOLKIT_REPO):$(ELEMENTAL_TOOLKIT_VERSION) \
-			--build-arg SOURCE_REPO=$(SOURCE_REPO) \
-			--build-arg SOURCE_VERSION=$(SOURCE_VERSION) \
-			--build-arg ELEMENTAL_REPO=$(ELEMENTAL_REPO) \
-			--build-arg ELEMENTAL_TAG=$(ELEMENTAL_TAG) \
-			--build-arg IMAGE_REPO=$(ELEMENTAL_REPO)/base-os \
-			--build-arg IMAGE_TAG=$(ELEMENTAL_TAG) \
+			--build-arg REPO=$(ELEMENTAL_REPO)/base-os \
+			--build-arg VERSION=$(ELEMENTAL_TAG) \
 			-t $(ELEMENTAL_REPO)/base-os:$(ELEMENTAL_TAG) \
 			$(if $(GITHUB_RUN_NUMBER),--push) \
 			-f Dockerfile.base.os .
